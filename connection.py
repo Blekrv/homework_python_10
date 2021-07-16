@@ -1,13 +1,19 @@
 # ADMIN INTERFACE
 import psycopg2
 from config import *
-from connection import Connection
+# connection = psycopg2.connect(
+#     user=USER, password=PASSWORD, host=HOST, port=PORT, database='shop_db')
+# cursor = connection.cursor()
+# cursor.execute('SELECT VERSION()')
+
+# print('Commit Success')
+# if connection:
+#     print('Connection closed')
+#     cursor.close()
+#     connection.close()
 
 
-class Admin(Connection):
-    def __init__(self, login, password):
-        self.login = login
-        self.password = password
+class Connection():
 
     @classmethod
     def openDB(cls):
@@ -134,23 +140,3 @@ class Admin(Connection):
         return result
     # def login(self):
     #     pass
-
-
-if __name__ == '__main__':
-    admin1 = Admin('Admin', 'Admin')
-    # orders = admin1.get_order_info()
-    # print(orders)
-    # data = [{
-    #         # 'id': 8,
-    #         'category_name': 'Rom'
-    #         }]
-    # put = admin1.add_product_category(data)
-    # print(put)
-    # id = admin1.getNextId('product_category')
-    # print(id)
-    # data = {
-    #     'category_name': 'Water'
-    # }
-    # edit = admin1.edit_product_category(data, "category_name = 'Rom'")
-    delete = admin1.delete_product_category('Water')
-    print(delete)
