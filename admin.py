@@ -1,4 +1,5 @@
 # ADMIN INTERFACE
+from datetime import datetime
 import psycopg2
 from config import *
 from connection import Connection
@@ -9,78 +10,11 @@ class Admin(Connection):
         self.login = login
         self.password = password
 
-    @classmethod
-    def openDB(cls):
-        connection = psycopg2.connect(
-            user=USER, password=PASSWORD, host=HOST, port=PORT, database='shop_db')
-        cursor = connection.cursor()
-        return connection, cursor
-
-    @classmethod
-    def closeDB(cls, connection, cursor):
-        cursor.close()
-        connection.close()
-
-    def getData(self, table: tuple, fields: tuple, selector: str = ''):
-        connection, cursor = self.openDB()
-        select_query = f"""
-            select {','.join(fields)} from {','.join(table)} {selector}
-            """
-
-        cursor.execute(select_query)
-        connection.commit()
-        result = cursor.fetchall()
-        self.closeDB(connection, cursor)
-        return result
-
-    def postData(self, table, data: list):
-
-        connection, cursor = self.openDB()
-        next_id = self.getNextId(table)
-        fields = list(data[0].keys())
-        fields.append('id')
-        values = ''
-        for row in data:
-            # value = f"({','.join(row.values())}),"
-
-            value = f"""({','.join(map(lambda item: f"'{item}'" ,row.values()))}, {next_id}),"""
-            next_id += 1
-            # for key in item:
-            #     value += item[key]
-            # value += '),'
-            values += value
-
-        insert_query = f"""INSERT INTO {table} ({','.join(fields)}) VALUES {values[:-1]};"""
-        cursor.execute(insert_query)
-        connection.commit()
-        self.closeDB(connection, cursor)
-        return 'Insert done!'
-
-    def deleteData(self, table, selector=''):
-        connection, cursor = self.openDB()
-        delete_query = f"""
-            delete from {table} where {selector}
-            """
-        cursor.execute(delete_query)
-        connection.commit()
-        self.closeDB(connection, cursor)
-        return 'delete done!'
-
-    def updateData(self, table, data: dict, selector: str):
-        connection, cursor = self.openDB()
-        set_items = ''
-        for key in data:
-            set_items += f"{key} = '{data[key]}',"
-        update_query = f"""
-            update {table} set {set_items[:-1]} where {selector}
-            """
-        cursor.execute(update_query)
-        connection.commit()
-        self.closeDB(connection, cursor)
-        return 'Update done!'
-
     def register_self(self):
-        pass
+        self.register(self.login, self.password, 'adm')
+
+    def login_self(self):
+        return self.login_check(self.login, self.password, 'adm')
 
     def add_product(self):
         pass
@@ -120,20 +54,42 @@ class Admin(Connection):
     def edit_employee(self):
         pass
 
-    def get_order_info(self, selector=''):
-        table = ('orders',)
-        fields = ('*',)
-        selector = ''
-        result = self.getData(table, fields, selector='')
-        return result
+    def get_order_info(self, category='', selector='', ):
+        """
+        category must be one of the item from the list:
+        ['city_name','date_of_order', 'product_name']
+        date format for selector: 2020-6-12
+        """
+        if self.login_self():
+            categoryes = ['city_name', 'date_of_order',
+                          'product_name', 'status']
+            table = ('orders o',)
+            fields = ("""o.id, concat(e.first_name,' ', e.last_name) as "employee", c.city_name, o.date_of_order, concat(c2.first_name,' ', c2.last_name) as "customer", p.product_name, o.price """,)
+            if category and category in categoryes and selector != '':
+                selector = selector if type(
+                    selector) == bool else str(selector)
+                where = f"""where {category} = '{selector}'"""
+            else:
+                where = ''
+            selector = f"""  left JOIN employee e on e.id = o.employee_id 
+                            left JOIN city c on c.id = o.city_id 
+                            left JOIN customer c2 on c2.id = o.customer_id 
+                            left JOIN product p on p.id = o.product_id {where}"""
+            result = self.getData(table, fields, selector)
+            fieldNames = ["id", "employee", "city_name",
+                          "date_of_order", "customer", "product_name", "price"]
+            changeRes = []
+            for item in result:
+                cort = {}
+                for index, element in enumerate(item):
+                    cort[fieldNames[index]] = element
+                changeRes.append(cort)
+        else:
+            changeRes = "Invalid loging!"
+        return changeRes
 
-    def getNextId(self, table):
-        table = (table,)
-        fields = ('id',)
-        result = self.getData(table, fields)[-1][0] + 1
-        return result
-    # def login(self):
-    #     pass
+    def login_self(self):
+        self.login(self.login, self.password, 'adm')
 
 
 if __name__ == '__main__':

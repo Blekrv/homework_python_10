@@ -30,7 +30,7 @@ class Connection():
     def getData(self, table: tuple, fields: tuple, selector: str = ''):
         connection, cursor = self.openDB()
         select_query = f"""
-            select {','.join(fields)} from {','.join(table)} {selector}
+            select {','.join(fields)} from {','.join(table)} {selector} order by id;
             """
 
         cursor.execute(select_query)
@@ -85,58 +85,32 @@ class Connection():
         self.closeDB(connection, cursor)
         return 'Update done!'
 
-    def register_self(self):
-        pass
-
-    def add_product(self):
-        pass
-
-    def add_product_category(self, data):
-        table = 'product_category'
-        result = self.postData(table, data)
-        return result
-
-    def add_employee(self):
-        pass
-
-    def delete_product(self):
-        pass
-
-    def delete_product_category(self, selector):
-        table = 'product_category'
-        selector = f"category_name = '{selector}'"
-        result = self.deleteData(self, table, selector)
-        return result
-
-    def delete_employee(self):
-        pass
-
-    def delete_customer(self):
-        pass
-
-    def edit_product(self):
-        pass
-
-    def edit_product_category(self, data, selector):
-        table = 'product_category'
-
-        result = self.updateData(table, data, selector)
-        return result
-
-    def edit_employee(self):
-        pass
-
-    def get_order_info(self, selector=''):
-        table = ('orders',)
-        fields = ('*',)
-        selector = ''
-        result = self.getData(table, fields, selector='')
-        return result
-
     def getNextId(self, table):
         table = (table,)
         fields = ('id',)
+        # print(self.getData(table, fields))
+        if self.getData(table, fields) == []:
+            return 1
         result = self.getData(table, fields)[-1][0] + 1
         return result
-    # def login(self):
-    #     pass
+
+    def register(self, login, password, role):
+        data = [{
+            'login': login,
+            'password': password,
+            'role': role
+        }]
+        find_login = self.getData(
+            ('reg_base',), ('login',), f" where login = '{login}'")
+        if not find_login:
+            self.postData('reg_base', data)
+        else:
+            print('Login is exist!')
+
+    def login_check(self, login, password, role):
+        find_login = self.getData(
+            ('reg_base',), ('*',), f" where login = '{login}'")
+        if find_login and password == find_login[0][2] and find_login[0][3] == role:
+            return find_login[0][0]
+        else:
+            return False
