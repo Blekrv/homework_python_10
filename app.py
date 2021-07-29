@@ -8,6 +8,8 @@ admin1.register_self()
 
 orders = admin1.get_order_info(category='status', selector=False)
 print(orders)
+
+
 # customer1 = Customer('Sania', '1234')
 # customer1.register_self('Sania', 'Kuznetsov', 1)
 # customer1.create_order([('Apple', 2), ('Meat', 2)])

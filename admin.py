@@ -84,6 +84,7 @@ class Admin(Connection):
                 for index, element in enumerate(item):
                     cort[fieldNames[index]] = element
                 changeRes.append(cort)
+                
         else:
             changeRes = "Invalid loging!"
         return changeRes
