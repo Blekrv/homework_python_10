@@ -6,6 +6,7 @@ from custom import respprint
 admin1 = Admin('Admin2', '1111')
 admin1.register_self()
 
+
 orders = admin1.get_order_info(category='status', selector=False)
 print(orders)
 

@@ -7,3 +7,6 @@ class unregister_user:
 
     def get_product_info(self):
         pass
+
+    def gg(self):
+        pass

@@ -96,6 +96,8 @@ class Customer(Connection):
                     'product_id': self.getData(('product',), ('id',), f"where product_name = '{item[0]}'")[0][0],
                     'price': self.getData(('product',), ('unit_price',), f"where product_name = '{item[0]}'")[0][0] * item[1],
 
+
+
                 },
                 data.append(order)
             result = self.postData(table, data)
