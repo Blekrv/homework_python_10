@@ -1,17 +1,36 @@
 # Empoloyee interface
 
-class Employee:
-    def __init__(self, firstname, lastname, dateofbirth, city, chief, login, password):
-        self.firstname = firstname
-        self.lastname = lastname
-        self.dateofbirth = dateofbirth
-        self.city = city
-        self.chief = chief
-        self.__login = login
-        self.__password = password
 
-    def edit_self_info(self):
-        pass
+import psycopg2
+from config import *
+from connection import Connection
 
-    def change_order_status(self, order):
-        pass
+
+class Employee(Connection):
+
+    def __init__(self, login, password):
+        self.login = login
+        self.password = password
+
+    def get_order_info(self, selector=''):
+        table = ('orders',)
+        fields = ('*',)
+        selector = ''
+        result = self.getData(table, fields, selector)
+        return result
+
+    def add_pr_category(self, data):
+        table = 'product_category'
+        result = self.postData(table, data)
+        return result
+
+    def edit_pr_category(self, data, selector):
+        table = 'product_category'
+        result = self.updateData(table, data, selector)
+        return result
+
+    def delete_pr_category(self, selector):
+        table = 'product_category'
+        selector = f"category_name = '{selector}'"
+        result = self.deleteData(table, selector)
+        return result

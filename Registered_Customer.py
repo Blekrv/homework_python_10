@@ -29,10 +29,6 @@ class Customer(Connection):
             'last_name': last_name,
             'reg_id': self.getNextId('reg_base')-1
         }]
-        # self.first_name = first_name
-        # self.last_name = last_name
-        # self.city_id = self.getData(
-        #     ('product',), ('unit_price',), f"where product_name = '{data}'")[0][0]
         self.postData('customer', data)
 
     def login_self(self):
@@ -83,22 +79,22 @@ class Customer(Connection):
             changeRes = "Invalid loging!"
         return changeRes
 
-    def create_order(self, products):
+    def create_order(self, products, employee_id):
         if self.login_self():
             table = 'orders'
             data = []
             for item in products:
                 order = {
-
+                    'employee_id': employee_id,
                     'customer_id': self.id,
                     'city_id': self.city_id,
                     'date_of_order': datetime.today().strftime('%Y-%m-%d'),
                     'product_id': self.getData(('product',), ('id',), f"where product_name = '{item[0]}'")[0][0],
-                    'price': self.getData(('product',), ('unit_price',), f"where product_name = '{item[0]}'")[0][0] * item[1],
+                    'price': self.getData(('product',), ('unit_price',), f"where product_name = '{item[0]}'")[0][0] * item[1]
 
 
 
-                },
+                }
                 data.append(order)
             result = self.postData(table, data)
             return result
