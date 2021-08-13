@@ -16,9 +16,6 @@ for item in range(50):
     add_city = """
         INSERT INTO city (id,city_name,city_id) VALUES 
         """
-
-
-
 connection.commit()
 print('Commit Success')
 if connection:

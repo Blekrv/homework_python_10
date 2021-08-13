@@ -8,6 +8,7 @@ def respprint(obj):
         keys = list(obj[0].keys())
         for item in keys:
             print("{0:20s}".format(item), end='')
+
         print()
 
         for item in obj:
