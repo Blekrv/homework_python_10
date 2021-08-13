@@ -65,8 +65,10 @@ class Admin(Connection):
         result = self.updateData(table, data, selector)
         return result
 
-    def edit_employee(self):
-        pass
+    def edit_employee(self, data, selector):
+        table = 'employee'
+        result = self.updateData(table, data, selector)
+        return result
 
     def get_order_info(self, category='', selector='', ):
         """
