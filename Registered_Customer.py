@@ -12,14 +12,18 @@ class Customer(Connection):
         self.city_id = ''
         self.id = ""
 
-    def edit_self_info(self):
-        pass
+    def edit_self_info(self, data, selector):
+        if self.login_self():
+            table = 'employee'
+            result = self.updateData(table, data, selector)
+            return result
 
-    def delete_order(self):
-        pass
-
-    def get_product_info(self):
-        pass
+    def delete_order(self, selector):
+        if self.login_self():
+            table = 'product_category'
+            selector = f"category_name = '{selector}'"
+            result = self.deleteData(table, selector)
+            return result
 
     def register_self(self, first_name, last_name, city):
         self.register(self.login, self.password, 'cus')

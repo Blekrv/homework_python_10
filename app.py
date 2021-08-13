@@ -6,7 +6,7 @@ from employee import Employee
 from custom import respprint
 # admin1 = Admin('Admin2', '1111')
 # admin1.register_self()
-employee1 = Employee('')
+# employee1 = Employee('')
 
 # orders = admin1.get_order_info(category='status', selector=False)
 # admin1.add_employee('BOB', 'BOBOVICH')
